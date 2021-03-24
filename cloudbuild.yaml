@@ -1,0 +1,46 @@
+steps:
+  - id: 'build image'
+    name: 'gcr.io/cloud-builders/docker'
+    args: ['build',
+           '--build-arg',
+           'env=${_ENV}',
+           '--build-arg',
+           'config=${_CONFIG}',
+           '--build-arg',
+           'ToEmail=${_TO_EMAIL}',
+           '--build-arg',
+           'SENDGRID_API_KEY=${_SENDGRID_API_KEY}',
+           '-t',
+           'gcr.io/$PROJECT_ID/comtam-deployment:$SHORT_SHA',
+           '.']
+
+  - id: 'tag image'
+    name: 'gcr.io/cloud-builders/docker'
+    args: ['tag', 'gcr.io/$PROJECT_ID/comtam-deployment:$SHORT_SHA', 'gcr.io/$PROJECT_ID/comtam-deployment:latest']
+
+  - id: 'push image'
+    name: 'gcr.io/cloud-builders/docker'
+    args: ['push',
+           'gcr.io/$PROJECT_ID/comtam-deployment:$SHORT_SHA']
+  - name: 'gcr.io/cloud-builders/docker'
+    args: ['push',
+           'gcr.io/$PROJECT_ID/comtam-deployment:latest']
+
+  - id: 'configure kubectl'
+    name: 'gcr.io/cloud-builders/gcloud'
+    env:
+      - 'CLOUDSDK_COMPUTE_ZONE=${_CLOUDSDK_COMPUTE_ZONE}'
+      - 'CLOUDSDK_CONTAINER_CLUSTER=${_CLOUDSDK_CONTAINER_CLUSTER}'
+    entrypoint: 'sh'
+    args:
+      - '-c'
+      - |
+        gcloud container clusters get-credentials "$${CLOUDSDK_CONTAINER_CLUSTER}" --zone "$${CLOUDSDK_COMPUTE_ZONE}"
+
+  - id: 'deploy to k8s'
+    name: 'gcr.io/cloud-builders/gcloud'
+    entrypoint: 'sh'
+    args:
+      - '-c'
+      - |
+        kubectl set image deployment/comtam-deployment comtam-deployment-sha256-1=gcr.io/$PROJECT_ID/comtam-deployment:$SHORT_SHA
