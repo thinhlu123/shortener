@@ -1,0 +1,65 @@
+syntax = "proto3";
+
+package userService;
+option go_package = ".;pd";
+
+message RegisterReq {
+  string username = 1;
+  string password = 2;
+  string phone_number = 3;
+  string identify_doc = 4;
+  string email = 5;
+  string full_name = 6;
+};
+
+message RegisterResp {
+  string message = 1;
+};
+
+message GetUserReq {
+  string username = 1;
+};
+
+message GetUserResp {
+  string phone_number = 1;
+  string identify_doc = 2;
+  string email = 3;
+  string full_name = 4;
+};
+
+message LoginReq {
+  string username = 1;
+  string password = 2;
+};
+
+message LoginResp {
+  string message = 1;
+  string token = 2;
+};
+
+message UpdateUserReq {
+  string username = 1;
+  message updater {
+    string email = 3;
+    string full_name = 4;
+  };
+};
+
+message UpdateUserResp {
+  string message = 1;
+};
+
+message WithdrawReq {
+
+};
+
+message WithdrawResp {
+
+};
+
+service UserService {
+  rpc Register(RegisterReq) returns (RegisterResp){};
+  rpc Login (LoginReq) returns (LoginResp){};
+  rpc UpdateUser(UpdateUserReq) returns (UpdateUserResp){};
+  rpc Withdraw(WithdrawReq) returns (WithdrawResp){};
+};

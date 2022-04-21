@@ -1,0 +1,48 @@
+server:
+  AppVersion: 1.0
+  Port: :8080
+  PprofPort: :5555
+  Mode: Development
+  JwtSecretKey: secretkey
+  CookieName: jwt-token
+  ReadTimeout: 5
+  WriteTimeout: 5
+  SSL: false
+  CtxDefaultTimeout: 12
+  CSRF: true
+  Debug: true
+  MaxConnectionIdle: 5
+  Timeout: 15
+  MaxConnectionAge: 5
+  Time: 120
+
+logger:
+  Development: true
+  DisableCaller: false
+  DisableStacktrace: false
+  Encoding: json
+  Level: info
+
+redis:
+  RedisAddr: localhost
+  RedisPort: :6379
+  RedisUser:
+  RedisPassword:
+  RedisDb: 0
+  RedisDefaultdb: 0
+  MinIdleConns: 200
+  PoolSize: 12000
+  PoolTimeout: 240
+  Password: ""
+  DB: 0
+
+db:
+  DBHost: [localhost]
+  DBUser: 123abc123
+  DBPass: 123abc123
+  DBName: local
+  DBAuth: admin
+  EnableSSL: false
+
+url:
+  host: http://localhost/

@@ -1,0 +1,26 @@
+syntax = "proto3";
+
+package linkService;
+option go_package = ".;pd";
+
+message CreateLinkReq {
+  string link = 1;
+};
+
+message CreateLinkResp {
+  string original_link = 1;
+  string short_link = 2;
+};
+
+message GetLinkReq {
+  string short_link = 1;
+};
+
+message GetLinkResp {
+  string original_link = 1;
+};
+
+service LinkService {
+  rpc CreateLink (CreateLinkReq) returns (CreateLinkResp) {};
+  rpc GetLink (GetLinkReq) returns (GetLinkResp){};
+};
