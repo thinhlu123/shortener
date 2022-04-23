@@ -3,6 +3,7 @@ package repository
 import (
 	"context"
 	"github.com/thinhlu123/shortener/internal/models"
+	"github.com/thinhlu123/shortener/pkg/utils"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo/options"
 	"time"
@@ -46,4 +47,22 @@ func (LinkRepository) IncreaseClickCount(ctx context.Context, item models.Link) 
 	}
 
 	return nil
+}
+
+func (LinkRepository) GetListLink(ctx context.Context, query models.Link) ([]models.Link, error) {
+	cur, err := models.LinkDB.GetCollection().Find(ctx, query)
+	if err != nil {
+		return nil, err
+	}
+
+	var rs []models.Link
+	if err := cur.All(ctx, &rs); err != nil {
+		return nil, err
+	}
+
+	if len(rs) == 0 {
+		return nil, utils.ErrNotFound
+	}
+
+	return rs, nil
 }

@@ -4,7 +4,10 @@ import (
 	"context"
 	"github.com/thinhlu123/shortener/internal/link"
 	linkService "github.com/thinhlu123/shortener/internal/link/pb"
+	"github.com/thinhlu123/shortener/internal/models"
+	"github.com/thinhlu123/shortener/pkg/auth"
 	"github.com/thinhlu123/shortener/pkg/logger"
+	"github.com/thinhlu123/shortener/pkg/utils"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 )
@@ -19,6 +22,38 @@ func NewLinkMicroservice(logger logger.Logger, linkUc link.LinkUsecases) *LinkMi
 type LinkMicroservice struct {
 	logger logger.Logger
 	linkUC link.LinkUsecases
+}
+
+func (l LinkMicroservice) GetListLink(ctx context.Context, req *linkService.GetListLinkReq) (*linkService.GetListLinkResp, error) {
+	token := utils.GetFromMetadata(ctx, "Authorization")
+	var query models.Link
+	if len(token) > 0 {
+		usr, err := auth.GetUsernameFromToken(token)
+		if err != nil {
+			return nil, status.Errorf(utils.ParseGRPCErrStatusCode(err), err.Error())
+		}
+		query.Username = usr
+	}
+
+	listLink, err := l.linkUC.GetListLink(ctx, query)
+	if err != nil {
+		return nil, status.Errorf(utils.ParseGRPCErrStatusCode(err), err.Error())
+	}
+
+	lenList := len(listLink)
+	rs := make([]*linkService.LinkData, lenList)
+	for i := 0; i < lenList; i++ {
+		rs[i] = &linkService.LinkData{
+			OriginalLink: listLink[i].OriginalUrl,
+			ShortLink:    listLink[i].ShortUrl,
+			ClickCount:   listLink[i].ClickCount,
+			Username:     listLink[i].Username,
+		}
+	}
+
+	return &linkService.GetListLinkResp{
+		LinkData: rs,
+	}, nil
 }
 
 func (l LinkMicroservice) GetLink(ctx context.Context, req *linkService.GetLinkReq) (*linkService.GetLinkResp, error) {

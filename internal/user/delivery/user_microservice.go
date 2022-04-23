@@ -100,7 +100,16 @@ func (u UserMicroservice) UpdateUser(ctx context.Context, req *pd.UpdateUserReq)
 	}
 
 	// TODO: validate update field
-	updater := models.User{}
+	upReq := req.GetUpdater()
+	email := upReq.GetEmail()
+	if len(email) > 0 && !isEmailValid(email) {
+		return nil, status.Errorf(codes.InvalidArgument, "invalid email input")
+	}
+
+	updater := models.User{
+		Email:    email,
+		FullName: upReq.GetFullName(),
+	}
 
 	if err := u.userUsecase.UpdateUser(ctx, filter, updater); err != nil {
 		return nil, status.Errorf(utils.ParseGRPCErrStatusCode(err), err.Error())

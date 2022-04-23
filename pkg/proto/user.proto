@@ -39,10 +39,11 @@ message LoginResp {
 
 message UpdateUserReq {
   string username = 1;
-  message updater {
+  message Updater {
     string email = 3;
     string full_name = 4;
   };
+  Updater updater = 2;
 };
 
 message UpdateUserResp {

@@ -20,6 +20,7 @@ const _ = grpc.SupportPackageIsVersion7
 type LinkServiceClient interface {
 	CreateLink(ctx context.Context, in *CreateLinkReq, opts ...grpc.CallOption) (*CreateLinkResp, error)
 	GetLink(ctx context.Context, in *GetLinkReq, opts ...grpc.CallOption) (*GetLinkResp, error)
+	GetListLink(ctx context.Context, in *GetListLinkReq, opts ...grpc.CallOption) (*GetListLinkResp, error)
 }
 
 type linkServiceClient struct {
@@ -48,12 +49,22 @@ func (c *linkServiceClient) GetLink(ctx context.Context, in *GetLinkReq, opts ..
 	return out, nil
 }
 
+func (c *linkServiceClient) GetListLink(ctx context.Context, in *GetListLinkReq, opts ...grpc.CallOption) (*GetListLinkResp, error) {
+	out := new(GetListLinkResp)
+	err := c.cc.Invoke(ctx, "/linkService.LinkService/GetListLink", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // LinkServiceServer is the server API for LinkService service.
 // All implementations should embed UnimplementedLinkServiceServer
 // for forward compatibility
 type LinkServiceServer interface {
 	CreateLink(context.Context, *CreateLinkReq) (*CreateLinkResp, error)
 	GetLink(context.Context, *GetLinkReq) (*GetLinkResp, error)
+	GetListLink(context.Context, *GetListLinkReq) (*GetListLinkResp, error)
 }
 
 // UnimplementedLinkServiceServer should be embedded to have forward compatible implementations.
@@ -65,6 +76,9 @@ func (UnimplementedLinkServiceServer) CreateLink(context.Context, *CreateLinkReq
 }
 func (UnimplementedLinkServiceServer) GetLink(context.Context, *GetLinkReq) (*GetLinkResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetLink not implemented")
+}
+func (UnimplementedLinkServiceServer) GetListLink(context.Context, *GetListLinkReq) (*GetListLinkResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetListLink not implemented")
 }
 
 // UnsafeLinkServiceServer may be embedded to opt out of forward compatibility for this service.
@@ -114,6 +128,24 @@ func _LinkService_GetLink_Handler(srv interface{}, ctx context.Context, dec func
 	return interceptor(ctx, in, info, handler)
 }
 
+func _LinkService_GetListLink_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetListLinkReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(LinkServiceServer).GetListLink(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/linkService.LinkService/GetListLink",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(LinkServiceServer).GetListLink(ctx, req.(*GetListLinkReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // LinkService_ServiceDesc is the grpc.ServiceDesc for LinkService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -128,6 +160,10 @@ var LinkService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetLink",
 			Handler:    _LinkService_GetLink_Handler,
+		},
+		{
+			MethodName: "GetListLink",
+			Handler:    _LinkService_GetListLink_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

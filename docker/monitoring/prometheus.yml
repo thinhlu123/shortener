@@ -11,6 +11,10 @@ scrape_configs:
     static_configs:
       - targets: ['node_exporter:9100']
 
-  - job_name: 'email-microservice'
+  - job_name: 'mongo-healthcheck'
     static_configs:
-      - targets: ['email-microservice:7070']
+      - targets: ['mongo_service:27017']
+
+  - job_name: 'redis-healthcheck'
+    static_configs:
+      - targets: ['redis:6379']

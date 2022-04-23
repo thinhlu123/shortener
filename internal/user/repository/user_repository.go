@@ -2,8 +2,8 @@ package repository
 
 import (
 	"context"
-	"errors"
 	"github.com/thinhlu123/shortener/internal/models"
+	"github.com/thinhlu123/shortener/pkg/utils"
 )
 
 func NewUserRepository() *UserRepository {
@@ -16,13 +16,13 @@ func (u *UserRepository) Login(ctx context.Context, user models.User) (string, e
 	var us models.User
 	err := models.UserDB.GetCollection().FindOne(ctx, models.User{
 		Usr: user.Usr,
-	}).Decode(&u)
+	}).Decode(&us)
 	if err != nil {
 		return "", err
 	}
 
 	if !us.ComparePwd(user.Pwd) {
-		return "", errors.New("password not match")
+		return "", utils.ErrPassword
 	}
 
 	return "", nil

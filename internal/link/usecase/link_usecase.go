@@ -79,6 +79,15 @@ func (l *LinkUsecase) GetLink(ctx context.Context, shortLink string) (string, er
 	return orLink, nil
 }
 
+func (l *LinkUsecase) GetListLink(ctx context.Context, query models.Link) ([]models.Link, error) {
+	listLink, err := l.linkRepo.GetListLink(ctx, query)
+	if err != nil {
+		return nil, err
+	}
+
+	return listLink, nil
+}
+
 func sha256Of(input string) []byte {
 	algorithm := sha256.New()
 	algorithm.Write([]byte(input))

@@ -11,4 +11,5 @@ type LinkRepository interface {
 	CreateShortLink(context.Context, models.Link) error
 	GetLink(context.Context, models.Link) (string, error)
 	IncreaseClickCount(context.Context, models.Link) error
+	GetListLink(context.Context, models.Link) ([]models.Link, error)
 }

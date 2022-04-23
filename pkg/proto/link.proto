@@ -3,6 +3,13 @@ syntax = "proto3";
 package linkService;
 option go_package = ".;pd";
 
+message LinkData {
+  string original_link = 1;
+  string short_link = 2;
+  int64 click_count = 3;
+  string username = 4;
+};
+
 message CreateLinkReq {
   string link = 1;
 };
@@ -20,7 +27,14 @@ message GetLinkResp {
   string original_link = 1;
 };
 
+message GetListLinkReq {};
+
+message GetListLinkResp {
+  repeated LinkData link_data = 1;
+};
+
 service LinkService {
   rpc CreateLink (CreateLinkReq) returns (CreateLinkResp) {};
   rpc GetLink (GetLinkReq) returns (GetLinkResp){};
+  rpc GetListLink(GetListLinkReq) returns (GetListLinkResp){};
 };

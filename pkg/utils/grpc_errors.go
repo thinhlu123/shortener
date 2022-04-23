@@ -9,27 +9,28 @@ import (
 )
 
 var (
-	ErrNotFound   = errors.New("Not found")
-	ErrUserExists = errors.New("User already exists")
+	ErrNotFound     = errors.New("not found")
+	ErrUserExists   = errors.New("user already exists")
+	ErrPassword     = errors.New("password not match")
+	ErrInvalidToken = errors.New("invalid token")
+	ErrExpireToken  = errors.New("expiry token")
 )
 
 // ParseGRPCErrStatusCode Parse error and get code
 func ParseGRPCErrStatusCode(err error) codes.Code {
 	switch {
-	case errors.Is(err, mongo.ErrNoDocuments):
+	case errors.Is(err, mongo.ErrNoDocuments), errors.Is(err, ErrNotFound):
 		return codes.NotFound
-	case errors.Is(err, context.Canceled):
+	case errors.Is(err, context.Canceled), errors.Is(err, context.Canceled):
 		return codes.Canceled
-	case errors.Is(err, context.DeadlineExceeded):
+	case errors.Is(err, context.DeadlineExceeded), errors.Is(err, context.DeadlineExceeded):
 		return codes.DeadlineExceeded
 	case errors.Is(err, ErrUserExists):
 		return codes.AlreadyExists
-	case errors.Is(err, context.Canceled):
-		return codes.Canceled
-	case errors.Is(err, context.DeadlineExceeded):
-		return codes.DeadlineExceeded
-	case errors.Is(err, ErrNotFound):
-		return codes.NotFound
+	case errors.Is(err, ErrPassword):
+		return codes.InvalidArgument
+	case errors.Is(err, ErrInvalidToken), errors.Is(err, ErrExpireToken):
+		return codes.Unauthenticated
 	}
 	return codes.Internal
 }

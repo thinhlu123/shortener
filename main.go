@@ -36,6 +36,7 @@ func main() {
 		config.Conf.Server.SSL,
 	)
 	appLogger.Infof("Success parsed config: %#v", config.Conf.Server.AppVersion)
+	appLogger.Infof("%v", config.Conf)
 
 	// init mongodb client
 	var client db.Client

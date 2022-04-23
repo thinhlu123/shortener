@@ -1,21 +1,29 @@
 version: "3.8"
 
 services:
-  mongo:
+  mongo_service:
     container_name: mongo_container
     image: mongo
     restart: always
     ports:
-      - 27017:27017
+      - '27017:27017'
     environment:
-      MONGO_INITDB_ROOT_USERNAME: root
-      MONGO_INITDB_ROOT_PASSWORD: admin-root
+      MONGO_INITDB_ROOT_USERNAME: 123abc123
+      MONGO_INITDB_ROOT_PASSWORD: 123abc123
+    healthcheck:
+      test: echo 'db.runCommand("ping").ok' | mongo admin -u MONGO_INITDB_ROOT_USERNAME -p MONGO_INITDB_ROOT_PASSWORD --quiet | grep 1
+      interval: 10s
+      timeout: 10s
+      retries: 5
+      start_period: 40s
+    networks:
+      - microservice_network
 
   prometheus:
     container_name: prometheus_container
     image: prom/prometheus
     volumes:
-      - ./docker/monitoring/prometheus-local.yml:/etc/prometheus/prometheus.yml:Z
+      - ./docker/monitoring/prometheus.yml:/etc/prometheus/prometheus.yml:Z
     command:
       - '--config.file=/etc/prometheus/prometheus.yml'
       - '--storage.tsdb.path=/prometheus'
@@ -40,6 +48,30 @@ services:
     image: grafana/grafana
     ports:
       - '3000:3000'
+    networks:
+      - microservice_network
+
+  redis:
+    container_name: redis_container
+    image: redis
+    restart: always
+    ports:
+      - '6379:6379'
+    command: redis-server --save 20 1 --loglevel warning
+    networks:
+      - microservice_network
+
+  shortener:
+    container_name: shortener_container
+    build: .
+    image: shortener
+    ports:
+      - '5555:5555'
+    depends_on:
+      mongo_service:
+        condition: service_healthy
+    links:
+      - mongo_service
     networks:
       - microservice_network
 
