@@ -24,7 +24,7 @@ logger:
   Level: info
 
 redis:
-  RedisAddr: localhost
+  RedisAddr: redis
   RedisPort: :6379
   RedisUser:
   RedisPassword:
@@ -37,10 +37,10 @@ redis:
   DB: 0
 
 db:
-  DBHost: [localhost]
+  DBHost: [mongo_service:27017]
   DBUser: 123abc123
   DBPass: 123abc123
-  DBName: test
+  DBName: local-docker
   DBAuth: admin
   EnableSSL: false
 

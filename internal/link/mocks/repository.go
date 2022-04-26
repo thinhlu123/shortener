@@ -64,6 +64,21 @@ func (mr *MockLinkRepositoryMockRecorder) GetLink(arg0, arg1 interface{}) *gomoc
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetLink", reflect.TypeOf((*MockLinkRepository)(nil).GetLink), arg0, arg1)
 }
 
+// GetListLink mocks base method.
+func (m *MockLinkRepository) GetListLink(arg0 context.Context, arg1 models.Link) ([]models.Link, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetListLink", arg0, arg1)
+	ret0, _ := ret[0].([]models.Link)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetListLink indicates an expected call of GetListLink.
+func (mr *MockLinkRepositoryMockRecorder) GetListLink(arg0, arg1 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetListLink", reflect.TypeOf((*MockLinkRepository)(nil).GetListLink), arg0, arg1)
+}
+
 // IncreaseClickCount mocks base method.
 func (m *MockLinkRepository) IncreaseClickCount(arg0 context.Context, arg1 models.Link) error {
 	m.ctrl.T.Helper()

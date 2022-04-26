@@ -122,6 +122,8 @@ func GetConfig(cfgPath string) error {
 func GetConfigPath(configPath string) string {
 	if configPath == "prd" {
 		return ""
+	} else if configPath == "docker" {
+		return "config/config_docker"
 	}
 	return "config/config_local"
 }

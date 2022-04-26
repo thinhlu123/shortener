@@ -70,8 +70,6 @@ services:
     depends_on:
       mongo_service:
         condition: service_healthy
-    links:
-      - mongo_service
     networks:
       - microservice_network
 
